@@ -1,0 +1,6 @@
+# Libraries needed
+numpy
+matplotlib
+scipy
+Ipython
+pyroomacoustics
