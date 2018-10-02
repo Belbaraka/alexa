@@ -1,6 +1,0 @@
-# Libraries needed
-pandas==0.20.3
-scipy==1.0.0
-matplotlib==2.1.2
-numpy==1.14.0
-#pyroomacoustics==0.1.18
