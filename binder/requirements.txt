@@ -1,9 +1,0 @@
-# Libraries needed
-matplotlib
-numpy
-Cython
-scipy>=0.18.0
-matplotlib
-joblib
-requests
-pyroomacoustics
