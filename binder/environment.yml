@@ -16,4 +16,3 @@ dependencies:
 - scikit-learn=0.19
 - tensorflow=1.1
 - sympy=1.0
-- pyroomacoustics==0.1.18
