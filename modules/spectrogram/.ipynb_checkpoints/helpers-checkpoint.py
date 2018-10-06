@@ -36,6 +36,9 @@ def compute_spectrogram(fs, signal, low_pass=False):
     
     #signal = signal[:,0] # mono audio
     
+    
+    duration = len(signal)/fs
+    
     #apply the lowpass filter if needed
     if low_pass:
         h_len = 50
@@ -53,6 +56,7 @@ def compute_spectrogram(fs, signal, low_pass=False):
         stft.set_filter(h, zb=h.shape[0] - 1)  
         processed_audio = np.zeros(signal.shape)
         n = 0
+        
         while  signal.shape[0] - n > hop:
             stft.analysis(signal[n:n+hop,])
             stft.process()  # apply the filter
@@ -60,18 +64,73 @@ def compute_spectrogram(fs, signal, low_pass=False):
             n += hop
             
         fig = plt.figure()
-        fig.set_size_inches(20,8)
+        fig.set_size_inches(20,3)
+        
         plt.subplot(2,1,1)
-        spec1, _, _, _ = plt.specgram(signal[:n-hop].astype(np.float32), NFFT=256, Fs=fs, vmin=-20, vmax=30) # dBFS scale
-        plt.title('Original Signal', fontsize=22)
+        #ax1.set_xlim([0, duration])
+        spec_sig, _, _, _ = plt.specgram(signal[:n-hop].astype(np.float32), NFFT=256, Fs=fs, vmin=-20, vmax=30) # dBFS scale
+        plt.title('Original Signal', fontsize=22, fontweight="bold")
+        plt.xlabel('Time [s]')
+        plt.ylabel('Frequency [Hz]')
+        
+        
         plt.subplot(2,1,2)
-        spec2, _, _, _ = plt.specgram(processed_audio[hop:n], NFFT=256, Fs=fs, vmin=-20, vmax=30) # dBFS scale
-        plt.title('Lowpass Filtered Signal', fontsize=22)
-        return spec1, spec2
+        #ax2.set_xlim([0, duration])
+        spec_lp, _, _, _ = plt.specgram(processed_audio[hop:n], NFFT=256, Fs=fs, vmin=-20, vmax=30) # dBFS scale
+        plt.title('Lowpass Filtered Signal', fontsize=22, fontweight="bold")
+        plt.xlabel('Time [s]')
+        plt.ylabel('Frequency [Hz]')
+        return 
     else:
         fig = plt.figure()
-        fig.set_size_inches(20,5)
+        #ax = fig.add_subplot(111)
+        #ax.set_xlim([0, duration-2])
+        fig.set_size_inches(20,3)
         spec, _, _, _ = plt.specgram(signal.astype(np.float32), NFFT=256, Fs=fs, vmin=-20, vmax=30) # dBFS scale
-        plt.title('Spectrogram', fontsize=22)
-        return spec
+        plt.title('Spectrogram', fontsize=22, fontweight="bold")
+        plt.xlabel('Time [s]')
+        plt.ylabel('Frequency [Hz]')
+        return 
+    
+
+def plot_spectrogramsOfWords(fs, s1, s2, s3, s4, s5, s6):  #s1 = (word, signal)
+        fig = plt.figure()
+        fig.set_size_inches(20,10)
+        plt.subplot(3,2,1)
+        plt.specgram(s1[1].astype(np.float32), NFFT=256, Fs=fs, vmin=-20, vmax=30) # dBFS scale
+        plt.title(s1[0], fontsize=11, fontweight="bold")
+        plt.ylabel('Frequency [Hz]')
+        
+        
+        plt.subplot(3,2,2)
+        plt.specgram(s2[1].astype(np.float32), NFFT=256, Fs=fs, vmin=-20, vmax=30) # dBFS scale
+        plt.title(s2[0], fontsize=11, fontweight="bold")
+        plt.ylabel('Frequency [Hz]')
+        
+        
+        plt.subplot(3,2,3)
+        plt.specgram(s3[1].astype(np.float32), NFFT=256, Fs=fs, vmin=-20, vmax=30) # dBFS scale
+        plt.title(s3[0], fontsize=11, fontweight="bold")
+        plt.ylabel('Frequency [Hz]')
+
+        
+        plt.subplot(3,2,4)
+        plt.specgram(s4[1].astype(np.float32), NFFT=256, Fs=fs, vmin=-20, vmax=30) # dBFS scale
+        plt.title(s4[0], fontsize=11, fontweight="bold")
+        plt.ylabel('Frequency [Hz]')
+        
+        
+        plt.subplot(3,2,5)
+        plt.specgram(s5[1].astype(np.float32), NFFT=256, Fs=fs, vmin=-20, vmax=30) # dBFS scale
+        plt.title(s5[0], fontsize=11, fontweight="bold")
+        plt.ylabel('Frequency [Hz]')
+        
+        
+        plt.subplot(3,2,6)
+        plt.specgram(s6[1].astype(np.float32), NFFT=256, Fs=fs, vmin=-20, vmax=30) # dBFS scale
+        plt.title(s6[0], fontsize=11, fontweight="bold")
+        plt.ylabel('Frequency [Hz]')
+        
+    
+    
     
