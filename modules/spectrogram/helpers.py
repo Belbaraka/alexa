@@ -31,7 +31,7 @@ def plot_cross(corr):
     plt.title("Correlation")
 
 
-def compute_spectrogram(fs, signal, low_pass=False):
+def compute_spectrogram(fs, signal, title, low_pass=False):
     
     
     #signal = signal[:,0] # mono audio
@@ -87,7 +87,7 @@ def compute_spectrogram(fs, signal, low_pass=False):
         #ax.set_xlim([0, duration-2])
         fig.set_size_inches(20,3)
         spec, _, _, _ = plt.specgram(signal.astype(np.float32), NFFT=256, Fs=fs, vmin=-20, vmax=30) # dBFS scale
-        plt.title('Spectrogram', fontsize=22, fontweight="bold")
+        plt.title(title, fontsize=15, fontweight="bold")
         plt.xlabel('Time [s]')
         plt.ylabel('Frequency [Hz]')
         return 
