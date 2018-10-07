@@ -1,9 +1,6 @@
 from scipy.signal import correlate
 import numpy as np 
-from scipy.io import wavfile
-import IPython
 import matplotlib.pyplot as plt
-import pyroomacoustics as pra
 
 
 
