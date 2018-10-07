@@ -6,4 +6,3 @@ dependencies:
 - matplotlib=2.1
 - python=3.6
 - scipy=1.0.0 
-
