@@ -45,9 +45,13 @@
 			var cameraControls
 			var effectController;
 			var box;
+			var mic;
 			var width=-1; // force initialization
 			var height;
 			var depth;
+			var X=false; // force initialization
+			var Y;
+			var Z;
 			var ambientLight, light;
 			init();
 			render();
@@ -60,9 +64,9 @@
 				camera.position.set( 15, 20, 30 );
 
 				// lights
-				ambientLight = new THREE.AmbientLight( 0x222222 );	// 0.2
-				light = new THREE.DirectionalLight( 0xFFFFFF, 1.0 )
-
+				ambientLight = new THREE.AmbientLight( 0x222222);	// 0.2
+				light = new THREE.DirectionalLight( 0xFFFFFF, 0.88)
+				light.position.set( 15, 40, 35 );
 				// renderer;
 				renderer = new THREE.WebGLRenderer( { antialias: true } );
 				renderer.setPixelRatio( window.devicePixelRatio );
@@ -76,19 +80,16 @@
 
 				// controls
 				cameraControls = new THREE.OrbitControls( camera, renderer.domElement );
-				cameraControls.minDistance = 20;
-				cameraControls.maxDistance = 50;
+				//cameraControls.minDistance = 20;
+				//cameraControls.maxDistance = 50;
 				cameraControls.maxPolarAngle = Math.PI / 2;
 				cameraControls.addEventListener( 'change', render);
 				
 				
-				
 				// textures
-
 				var loader = new THREE.TextureLoader();
 				var texture = loader.load( 'textures/sprites/disc.png' );
-				
-				
+
 
 				//scene itself
 				scene = new THREE.Scene();
@@ -123,37 +124,74 @@
 			function setupGui() {
 				effectController = {
 					newWidth: 5.0,
-					newHeight: 3.0,
+					newHeigth: 3.0,
 					newDepth: 10.0,
-					
-
+					newX: 0,
+					newY: 0,
+					newZ: 0
+	
 				};
 				var h;
 				var gui = new dat.GUI();
 				// room size (attributes)
 				h = gui.addFolder( "Room  dimensions" );
-				h.add( effectController, "newWidth", 0.0, 30.0, 1.0 ).name( "Width" ).onChange( render );
-				h.add( effectController, "newHeight", 0.0, 30.0, 1.0 ).name( "Height" ).onChange( render );
-				h.add( effectController, "newDepth", 0.0, 30.0, 1.0 ).name( "Depth" ).onChange( render );
+				h.add( effectController, "newWidth", 0.0, 30.0, 1.0 ).name( "Width (dm)" ).onChange( render );
+				h.add( effectController, "newHeigth", 0.0, 30.0, 1.0 ).name( "Heigth (dm)" ).onChange( render );
+				h.add( effectController, "newDepth", 0.0, 30.0, 1.0 ).name( "Depth (dm)" ).onChange( render );
 				
+				h = gui.addFolder( "Microphone's  positions" );
+				h.add( effectController, "newX", -effectController.newWidth/2, effectController.newWidth/2, 0.1 ).name( "X position" ).onChange( render );
+				h.add( effectController, "newY", -effectController.newHeigth/2, effectController.newHeigth/2, 0.1 ).name( "Y position" ).onChange( render );
+				h.add( effectController, "newZ", -effectController.newDepth/2, effectController.newDepth/2, 0.1 ).name( "Z position" ).onChange( render );
 			}
 
 			function render() {
 
 				if ( effectController.newWidth !== width ||
-					effectController.newHeight !== height ||
-					effectController.newDepth !== depth )
+					effectController.newHeigth !== heigth ||
+					effectController.newDepth !== depth ||
+					effectController.newX !== X ||
+					effectController.newY !== Y ||
+					effectController.newZ !== Z)
 				{
 					width = effectController.newWidth;
-					height = effectController.newHeight;
+					heigth = effectController.newHeigth;
 					depth = effectController.newDepth;
 
+					X = effectController.newX;
+					Y = effectController.newY;
+					Z = effectController.newZ;
+
+
 					createNewBox();
+					createNewMic();
 				}
 
 
 
 				renderer.render( scene, camera );
+			}
+			
+
+			function createNewMic() {
+				if ( mic !== undefined ) {
+					mic.geometry.dispose();
+					scene.remove( mic );
+				}
+				
+				var micGeometry = new THREE.SphereBufferGeometry(0.3, 32, 32);
+				var meshMaterial = new THREE.MeshLambertMaterial( {
+					color: 0xff3333,
+					//opacity: 0.2,
+					wireframe: true,
+					//transparent: true,
+				} );
+				mic = new THREE.Mesh( micGeometry, meshMaterial );
+				mic.position.set(X, effectController.newY, effectController.newZ);
+				mic.rotation.y += 0.005;
+				scene.add( mic );
+
+	
 			}
 
 			function createNewBox() {
@@ -164,32 +202,20 @@
 				}
 				// points
 
-				var boxGeometry = new THREE.BoxBufferGeometry(width, effectController.newHeight, effectController.newDepth)
-
-
-				/*var vertices = new THREE.BoxGeometry(w).vertices;
-				group = new THREE.Group();
-				scene.add( group );*/
+				var boxGeometry = new THREE.BoxBufferGeometry(width, effectController.newHeigth, effectController.newDepth);
 				
-			
 
-				/*var pointsMaterial = new THREE.PointsMaterial( {
-					color: 0x0080ff,
-					map: texture,
-					size: 1,
-					alphaTest: 0.5
-				} );
-				var pointsGeometry = new THREE.BufferGeometry().setFromPoints( vertices );
-				var points = new THREE.Points( pointsGeometry, pointsMaterial );
-				group.add( points );*/
+				
 
-				// convex hull
 				var meshMaterial = new THREE.MeshLambertMaterial( {
 					color: 0xffffff,
-					opacity: 0.4,
-					transparent: true
+					opacity: 0.5,
+					transparent: true,
 				} );
 
+				box = new THREE.Mesh(boxGeometry, meshMaterial)
+
+				scene.add( box );
 				/*var meshGeometry = new THREE.ConvexBufferGeometry( vertices );
 				var mesh = new THREE.Mesh( meshGeometry, meshMaterial );
 				mesh.material.side = THREE.BackSide; // back faces
@@ -198,10 +224,31 @@
 				var mesh = new THREE.Mesh( meshGeometry, meshMaterial.clone() );
 				mesh.material.side = THREE.FrontSide; // front faces
 				mesh.renderOrder = 1;*/
+				
 
-				box = new THREE.Mesh(boxGeometry, meshMaterial)
+				/*var pointsMaterial = new THREE.PointsMaterial( {
+					color: 0x0080ff,
+					//map: texture,
+					size: 1,
+					alphaTest: 0.5
+				} );
 
-				scene.add( box );
+				points = new THREE.Points( boxGeometry, pointsMaterial )
+				scene.add(points)*/
+				/*var vertices = new THREE.BoxGeometry(w).vertices;
+				group = new THREE.Group();
+				scene.add( group );*/
+				
+			
+
+				
+				/*
+				var pointsGeometry = new THREE.BufferGeometry().setFromPoints( vertices );
+				var points = new THREE.Points( pointsGeometry, pointsMaterial );
+				group.add( points );*/
+
+				// convex hull
+				
 
 
 			}
