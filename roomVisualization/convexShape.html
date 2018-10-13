@@ -1,0 +1,211 @@
+!DOCTYPE html>
+<html lang="en">
+	<head>
+		<title>three.js webgl - convex geometry</title>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+		<style>
+			body {
+				font-family: Monospace;
+				background-color: #000;
+				margin: 0px;
+				overflow: hidden;
+			}
+			#info {
+				position: absolute;
+				color: #00fde8;
+				top: 0px;
+				width: 100%;
+				padding: 5px;
+				text-align:center;
+			}
+			a {
+				color: #00fde8;
+			}
+			
+		</style>
+	</head>
+	<body>
+
+		<div id="info"><a href="http://threejs.org" target="_blank" rel="noopener">roomVisualisation.js</a> - 3D Room</div>
+
+		<script src="js/three.js"></script>
+		<script src="js/OrbitControls.js"></script>
+		<script src="js/QuickHull.js"></script>
+		<script src="js/ConvexGeometry.js"></script>
+		<script src="js/WebGL.js"></script>
+		<script src="js/stats.min.js"></script>
+		<script src='js/dat.gui.min.js'></script>
+
+		<script>
+			if ( WEBGL.isWebGLAvailable() === false ) {
+				document.body.appendChild( WEBGL.getWebGLErrorMessage() );
+			}
+			var camera, scene, renderer;
+			var cameraControls
+			var effectController;
+			var box;
+			var width=-1; // force initialization
+			var height;
+			var depth;
+			var ambientLight, light;
+			init();
+			render();
+			function init() {
+				var container = document.createElement( 'div' );
+				document.body.appendChild( container );
+
+				// camera
+				camera = new THREE.PerspectiveCamera( 45, window.innerWidth / window.innerHeight, 1, 80000 );
+				camera.position.set( 15, 20, 30 );
+
+				// lights
+				ambientLight = new THREE.AmbientLight( 0x222222 );	// 0.2
+				light = new THREE.DirectionalLight( 0xFFFFFF, 1.0 )
+
+				// renderer;
+				renderer = new THREE.WebGLRenderer( { antialias: true } );
+				renderer.setPixelRatio( window.devicePixelRatio );
+				renderer.setSize( window.innerWidth, window.innerHeight );
+				renderer.gammaInput = true;
+				renderer.gammaOutput = true;
+				container.appendChild( renderer.domElement );
+
+				// events
+				window.addEventListener( 'resize', onWindowResize, false );
+
+				// controls
+				cameraControls = new THREE.OrbitControls( camera, renderer.domElement );
+				cameraControls.minDistance = 20;
+				cameraControls.maxDistance = 50;
+				cameraControls.maxPolarAngle = Math.PI / 2;
+				cameraControls.addEventListener( 'change', render);
+				
+				
+				
+				// textures
+
+				var loader = new THREE.TextureLoader();
+				var texture = loader.load( 'textures/sprites/disc.png' );
+				
+				
+
+				//scene itself
+				scene = new THREE.Scene();
+				//scene.background = new THREE.Color( 0xAAAAAA );
+				scene.add( ambientLight );
+				scene.add( light );
+				scene.add( new THREE.AxesHelper( 15 ) );
+
+				// GUI
+				setupGui();
+
+
+
+			}
+
+			// EVENT HANDLERS
+
+			function onWindowResize() {
+				camera.aspect = window.innerWidth / window.innerHeight;
+				camera.updateProjectionMatrix();
+				renderer.setSize( window.innerWidth, window.innerHeight );
+				camera.aspect = canvasWidth / canvasHeight;
+				camera.updateProjectionMatrix();
+				render();
+			}
+			/*function animate() {
+				requestAnimationFrame( animate );
+				//group.rotation.y += 0.005;
+				render();
+			}*/
+			
+			function setupGui() {
+				effectController = {
+					newWidth: 5.0,
+					newHeight: 3.0,
+					newDepth: 10.0,
+					
+
+				};
+				var h;
+				var gui = new dat.GUI();
+				// room size (attributes)
+				h = gui.addFolder( "Room  dimensions" );
+				h.add( effectController, "newWidth", 0.0, 30.0, 1.0 ).name( "Width" ).onChange( render );
+				h.add( effectController, "newHeight", 0.0, 30.0, 1.0 ).name( "Height" ).onChange( render );
+				h.add( effectController, "newDepth", 0.0, 30.0, 1.0 ).name( "Depth" ).onChange( render );
+				
+			}
+
+			function render() {
+
+				if ( effectController.newWidth !== width ||
+					effectController.newHeight !== height ||
+					effectController.newDepth !== depth )
+				{
+					width = effectController.newWidth;
+					height = effectController.newHeight;
+					depth = effectController.newDepth;
+
+					createNewBox();
+				}
+
+
+
+				renderer.render( scene, camera );
+			}
+
+			function createNewBox() {
+
+				if ( box !== undefined ) {
+					box.geometry.dispose();
+					scene.remove( box );
+				}
+				// points
+
+				var boxGeometry = new THREE.BoxBufferGeometry(width, effectController.newHeight, effectController.newDepth)
+
+
+				/*var vertices = new THREE.BoxGeometry(w).vertices;
+				group = new THREE.Group();
+				scene.add( group );*/
+				
+			
+
+				/*var pointsMaterial = new THREE.PointsMaterial( {
+					color: 0x0080ff,
+					map: texture,
+					size: 1,
+					alphaTest: 0.5
+				} );
+				var pointsGeometry = new THREE.BufferGeometry().setFromPoints( vertices );
+				var points = new THREE.Points( pointsGeometry, pointsMaterial );
+				group.add( points );*/
+
+				// convex hull
+				var meshMaterial = new THREE.MeshLambertMaterial( {
+					color: 0xffffff,
+					opacity: 0.4,
+					transparent: true
+				} );
+
+				/*var meshGeometry = new THREE.ConvexBufferGeometry( vertices );
+				var mesh = new THREE.Mesh( meshGeometry, meshMaterial );
+				mesh.material.side = THREE.BackSide; // back faces
+				mesh.renderOrder = 0;
+				group.add( mesh );
+				var mesh = new THREE.Mesh( meshGeometry, meshMaterial.clone() );
+				mesh.material.side = THREE.FrontSide; // front faces
+				mesh.renderOrder = 1;*/
+
+				box = new THREE.Mesh(boxGeometry, meshMaterial)
+
+				scene.add( box );
+
+
+			}
+		</script>
+
+	</body>
+</html>
