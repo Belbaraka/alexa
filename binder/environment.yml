@@ -16,3 +16,7 @@ dependencies:
 - tornado
 - python-dateutil
 - recommonmark
+- matplotlib==2.1.2
+- numpy==1.14.0
+- Cython==0.27.3
+- scipy==1.0.0
