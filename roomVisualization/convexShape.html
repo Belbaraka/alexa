@@ -44,14 +44,14 @@
 			var camera, scene, renderer;
 			var cameraControls
 			var effectController;
-			var box;
-			var mic;
+			var box, mic, src;
 			var width=-1; // force initialization
-			var height;
-			var depth;
-			var X=false; // force initialization
-			var Y;
-			var Z;
+			var heigh, depth;
+			var micX=false; // force initialization
+			var micY, micZ;
+			var srcX=false; // force initialization
+			var srcY, srcZ;
+			var b_axis;
 			var ambientLight, light;
 			init();
 			render();
@@ -89,14 +89,13 @@
 				// textures
 				var loader = new THREE.TextureLoader();
 				var texture = loader.load( 'textures/sprites/disc.png' );
-
-
+				
 				//scene itself
 				scene = new THREE.Scene();
 				//scene.background = new THREE.Color( 0xAAAAAA );
 				scene.add( ambientLight );
 				scene.add( light );
-				scene.add( new THREE.AxesHelper( 15 ) );
+				//scene.add( new THREE.AxesHelper( 15 ) );
 
 				// GUI
 				setupGui();
@@ -123,12 +122,16 @@
 			
 			function setupGui() {
 				effectController = {
-					newWidth: 5.0,
-					newHeigth: 3.0,
-					newDepth: 10.0,
-					newX: 0,
-					newY: 0,
-					newZ: 0
+					newWidth: 9.0,
+					newHeigth: 8.0,
+					newDepth: 20.0,
+					newMicX: 0,
+					newMicY: 0,
+					newMicZ: 0,
+					newSrcX: -2.6,
+					newSrcY: -1,
+					newSrcZ: -6.8,
+					axis: true
 	
 				};
 				var h;
@@ -139,38 +142,62 @@
 				h.add( effectController, "newHeigth", 0.0, 30.0, 1.0 ).name( "Heigth (dm)" ).onChange( render );
 				h.add( effectController, "newDepth", 0.0, 30.0, 1.0 ).name( "Depth (dm)" ).onChange( render );
 				
-				h = gui.addFolder( "Microphone's  positions" );
-				h.add( effectController, "newX", -effectController.newWidth/2, effectController.newWidth/2, 0.1 ).name( "X position" ).onChange( render );
-				h.add( effectController, "newY", -effectController.newHeigth/2, effectController.newHeigth/2, 0.1 ).name( "Y position" ).onChange( render );
-				h.add( effectController, "newZ", -effectController.newDepth/2, effectController.newDepth/2, 0.1 ).name( "Z position" ).onChange( render );
+				h = gui.addFolder( "Microphone's  position (RED)" );
+				h.add( effectController, "newMicX", -15.0, 15.0, 0.1 ).name( "X position" ).onChange( render );
+				h.add( effectController, "newMicY", -15.0, 15.0, 0.1 ).name( "Y position" ).onChange( render );
+				h.add( effectController, "newMicZ", -15.0, 15.0, 0.1 ).name( "Z position" ).onChange( render );
+			
+				h = gui.addFolder( "Source's  position (GREEN)" );
+				h.add( effectController, "newSrcX", -15.0, 15.0, 0.1 ).name( "X position" ).onChange( render );
+				h.add( effectController, "newSrcY", -15.0, 15.0, 0.1 ).name( "Y position" ).onChange( render );
+				h.add( effectController, "newSrcZ", -15.0, 15.0, 0.1 ).name( "Z position" ).onChange( render );
+				
+				gui.add( effectController, "axis" ).name( "Axes Helper" ).onChange( render );
+			
+			
 			}
+
 
 			function render() {
 
 				if ( effectController.newWidth !== width ||
 					effectController.newHeigth !== heigth ||
 					effectController.newDepth !== depth ||
-					effectController.newX !== X ||
-					effectController.newY !== Y ||
-					effectController.newZ !== Z)
+					effectController.newMicX !== micX ||
+					effectController.newMicY !== micY ||
+					effectController.newMicZ !== micZ ||
+					effectController.newSrcX !== srcX ||
+					effectController.newSrcY !== srcY ||
+					effectController.newSrcZ !== srcZ ||
+					effectController.axis !== b_axis)
 				{
+
+					b_axis = effectController.axis;
+
 					width = effectController.newWidth;
 					heigth = effectController.newHeigth;
 					depth = effectController.newDepth;
 
-					X = effectController.newX;
-					Y = effectController.newY;
-					Z = effectController.newZ;
+					micX = effectController.newMicX;
+					micY = effectController.newMicY;
+					micZ = effectController.newMicZ;
+
+					srcX = effectController.newSrcX;
+					srcY = effectController.newSrcY;
+					srcZ = effectController.newSrcZ;
 
 
 					createNewBox();
 					createNewMic();
+					createNewSrc();
 				}
+				
 
 
 
 				renderer.render( scene, camera );
 			}
+			
 			
 
 			function createNewMic() {
@@ -187,9 +214,35 @@
 					//transparent: true,
 				} );
 				mic = new THREE.Mesh( micGeometry, meshMaterial );
-				mic.position.set(X, effectController.newY, effectController.newZ);
-				mic.rotation.y += 0.005;
+				mic.position.set(micX, effectController.newMicY, effectController.newMicZ);
+				//mic.rotation.y += 0.005;
 				scene.add( mic );
+				 if (b_axis){
+					 ax = new THREE.AxesHelper( 15 );
+					scene.add( ax);
+				 } else {
+					 scene.remove(ax);
+				 }
+	
+			}
+
+			function createNewSrc() {
+				if ( src !== undefined ) {
+					src.geometry.dispose();
+					scene.remove( src );
+				}
+				
+				var srcGeometry = new THREE.SphereBufferGeometry(0.3, 32, 32);
+				var meshMaterial = new THREE.MeshLambertMaterial( {
+					color: 0x33ff66,
+					//opacity: 0.2,
+					wireframe: true,
+					//transparent: true,
+				} );
+				src = new THREE.Mesh( srcGeometry, meshMaterial );
+				src.position.set(srcX, effectController.newSrcY, effectController.newSrcZ);
+				//src.rotation.y += 0.005;
+				scene.add( src );
 
 	
 			}
@@ -209,13 +262,20 @@
 
 				var meshMaterial = new THREE.MeshLambertMaterial( {
 					color: 0xffffff,
-					opacity: 0.5,
+					opacity: 0.1,
 					transparent: true,
 				} );
 
 				box = new THREE.Mesh(boxGeometry, meshMaterial)
 
 				scene.add( box );
+
+				var material2 = new THREE.MeshPhongMaterial({
+  					color:0xFF0000,
+  					wireframe:true
+				});
+				mesh2 = new THREE.Mesh(boxGeometry.clone(), material2);
+				scene.add(mesh2);
 				/*var meshGeometry = new THREE.ConvexBufferGeometry( vertices );
 				var mesh = new THREE.Mesh( meshGeometry, meshMaterial );
 				mesh.material.side = THREE.BackSide; // back faces
