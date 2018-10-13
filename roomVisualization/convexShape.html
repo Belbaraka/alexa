@@ -52,6 +52,7 @@
 			var srcX=false; // force initialization
 			var srcY, srcZ;
 			var b_axis;
+			var count=0;
 			var ambientLight, light;
 			init();
 			render();
@@ -168,11 +169,9 @@
 					effectController.newMicZ !== micZ ||
 					effectController.newSrcX !== srcX ||
 					effectController.newSrcY !== srcY ||
-					effectController.newSrcZ !== srcZ ||
-					effectController.axis !== b_axis)
+					effectController.newSrcZ !== srcZ)
 				{
 
-					b_axis = effectController.axis;
 
 					width = effectController.newWidth;
 					heigth = effectController.newHeigth;
@@ -191,6 +190,15 @@
 					createNewMic();
 					createNewSrc();
 				}
+
+				if (effectController.axis !== b_axis) {
+
+					b_axis = effectController.axis;
+					createNewAxis();
+
+				}
+
+
 				
 
 
@@ -198,7 +206,16 @@
 				renderer.render( scene, camera );
 			}
 			
-			
+			function createNewAxis(){ 
+				
+				if (b_axis){
+					 ax = new THREE.AxesHelper( 15 );
+					 scene.add( ax);
+				 } else {
+					 scene.remove(ax);
+				 }
+
+			}
 
 			function createNewMic() {
 				if ( mic !== undefined ) {
@@ -217,12 +234,6 @@
 				mic.position.set(micX, effectController.newMicY, effectController.newMicZ);
 				//mic.rotation.y += 0.005;
 				scene.add( mic );
-				 if (b_axis){
-					 ax = new THREE.AxesHelper( 15 );
-					scene.add( ax);
-				 } else {
-					 scene.remove(ax);
-				 }
 	
 			}
 
@@ -252,7 +263,8 @@
 				if ( box !== undefined ) {
 					box.geometry.dispose();
 					scene.remove( box );
-				}
+					scene.remove(mesh2)
+				} 
 				// points
 
 				var boxGeometry = new THREE.BoxBufferGeometry(width, effectController.newHeigth, effectController.newDepth);
