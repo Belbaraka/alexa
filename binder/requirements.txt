@@ -7,3 +7,10 @@ recommonmark==0.4.0
 sphinx>=1.4.6
 sphinx_rtd_theme
 pyroomacoustics
+Cython
+numpy
+scipy>=0.18.0
+matplotlib
+sounddevice
+samplerate
+mir_eval
