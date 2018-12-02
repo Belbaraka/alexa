@@ -17,7 +17,7 @@ Microphones are placed around a sphere of radius $10 cm$ at the center of the ro
 - Absorbtion factor : $0.2$ (for all walls)
 - Number of sources : $1$
 
-![Shoe Box](Shoe Box.png)
+![Shoe Box](Shoe_Box.png)
 
 ### 1. Setup n°1 : 5 microphones
 
