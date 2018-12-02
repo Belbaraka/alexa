@@ -4,7 +4,7 @@ import random, math
 from tqdm import tqdm
 
 #### CONSTANTS #####
-M = 6 #number of pair of mics used
+M = 5 #number of pair of mics used
 c = 343.0 #sound speed at 20°C
 tdoa_estimate_correction = 3.75
 

@@ -8,7 +8,7 @@ import math, random
 
 
 
-def sphere_micsArray(n_mics, room_dim, radius=0.01, randomize=False):
+def sphere_micsArray(n_mics, room_dim, radius=0.1, randomize=False):
     rnd = 1.
     if randomize:
         rnd = random.random() * n_mics
