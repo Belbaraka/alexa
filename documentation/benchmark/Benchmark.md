@@ -17,7 +17,7 @@ Microphones are placed around a sphere of radius $10 cm$ at the center of the ro
 - Absorbtion factor : $0.2$ (for all walls)
 - Number of sources : $1$
 
-![Shoe Box](/Users/Belbaraka/Desktop/MA3/Project/alexa/documentation/benchmark/Shoe Box.png)
+![Shoe Box](Shoe Box.png)
 
 ### 1. Setup n°1 : 5 microphones
 
@@ -53,7 +53,7 @@ Again, microphones are placed around a sphere of radius $10 cm$ but this time at
 - Number of Sources: 1 
 - Number of Microphones: 5
 
-![L-Shaped](/Users/Belbaraka/Desktop/MA3/Project/alexa/documentation/benchmark/L-Shaped.png)
+![L-Shaped](L-Shaped.png)
 
 ### 1. Setup n°1 : no occlusion
 
