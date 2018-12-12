@@ -6,7 +6,7 @@ We design in what follows a benchmark to characterize and compare sound source l
 Two steps approach. First the Time Difference of Arrival (TDOA) is derived from the Generalized Cross Correlation (GCC) function. Then the ML location estimate can be shown to be the position which minimizes the least squares error criterion. 
 
 **_`SRP-PHAT`_** <br>
-The algorithm can be interpreted as a beamforming-based approach that searches for the candidate position that maximizes the output of a steered delay-and-sum beamformer. It consists in a grid-search procedure that evaluates the objective function on a grid G of candidate source locations to estimate the spatial location of the sound source, as the point of the grid that provides the maximum SRP.
+The algorith	m can be interpreted as a beamforming-based approach that searches for the candidate position that maximizes the output of a steered delay-and-sum beamformer. It consists in a grid-search procedure that evaluates the objective function on a grid G of candidate source locations to estimate the spatial location of the sound source, as the point of the grid that provides the maximum SRP.
 
 - [I - Shoe Box Room](#sbr)
 - [II - L-Shaped Room](#lsr)
